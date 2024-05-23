@@ -9,6 +9,7 @@ const Form = () => {
     const [phoneType, setPhoneType] = useState('');
     const [staff, setStaff] = useState('');
     const [bio, setBio] = useState('');
+
     const [signup, setSignup] = useState(false);
 
     const [validationErrors, setValidationErrors] = useState({});
@@ -19,7 +20,8 @@ const Form = () => {
 
         if (!name.length > 0) errors.name = 'Please enter your Name';
         if (!email.includes('@')) errors.email = 'Please provide a valid Email';
-        const phonePattern = /^\d{10}$/;
+        // const phonePattern = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+        const phonePattern = /^(\+?\d{1,4}?[-.\s]?\(?(?:0|[1-9]{1})\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}[\s]*(?:ext|x|ext.)?\s*\d{1,5}?)$/;
         if (!phonePattern.test(phoneNumber)) errors.phoneNumber = 'Phone number must be 10 digits';
 
         setValidationErrors(() => errors);
@@ -34,7 +36,16 @@ const Form = () => {
     }
 
     const handlePhoneNumberChange = (event) => {
+        // const value = event.target.value;
+        // if (value !== '' && !isNaN(value)) {
+        //     setPhoneNumber(() => parseInt(event.target.value));
+        //     console.log(typeof parseInt(event.target.value))
+        //     console.log(typeof event.target.value)
+        // }
+
         setPhoneNumber(() => event.target.value);
+        console.log(event.target.value);
+        console.log(typeof event.target.value, '[jjjii', phoneNumber);
     }
 
     const handlePhoneTypeChange = (event) => {
@@ -64,40 +75,66 @@ const Form = () => {
         ${validationErrors.email ? "* " + validationErrors.email : ""}
         ${validationErrors.phoneNumber ? "* " + validationErrors.phoneNumber : ""} `);
         }
+
+        const contactUsInformation = {
+            name, email, phoneNumber, phoneType, staff, bio, submittedOn: new Date()
+        }
+
+        console.log(contactUsInformation);
+
+        setName('');
+        setEmail('');
+        setPhoneNumber('');
+        setPhoneType('')
+        setStaff('');
+        setBio('');
+        setSignup(false);
+        setValidationErrors({});
+        setHasSubmitted(false);
     }
 
     return (
         <section className="form-wrapper">
             <form onSubmit={handleSubmit}>
-                <div className='error'>
-                    {hasSubmitted && validationErrors.name && `* ${validationErrors.name} `}
-                </div>
                 <div className="form-group">
-                    <label htmlFor="name">Name</label>
-                    <input type="text" name="name" id="name" value={name} onChange={handleNameChange} />
+                    <div>
+                        <label htmlFor="name">Name</label>
+                        <div className='error'>
+                            {hasSubmitted && validationErrors.name && `* ${validationErrors.name} `}
+                        </div>
+                    </div>
+                    <input type="text" name="name" id="name" value={name} onChange={handleNameChange} required />
                 </div>
 
-                <div className='error'>
-                    {hasSubmitted && validationErrors.email && `* ${validationErrors.email} `}
-                </div>
+
                 <div className="form-group">
-                    <label htmlFor="email">Email</label>
-                    <input type="email" name="email" id="email" value={email} onChange={handleEmailChange} />
+                    <div>
+                        <label htmlFor="email">Email</label>
+                        <span className='error'>
+                            {hasSubmitted && validationErrors.email && `* ${validationErrors.email}`}
+                        </span>
+                    </div>
+                    <input type="email" name="email" id="email" value={email} onChange={handleEmailChange} required />
                 </div>
 
-                <div className='error'>
-                    {hasSubmitted && validationErrors.phoneNumber && `* ${validationErrors.phoneNumber} `}
-                </div>
                 <div className="form-group">
-                    <label htmlFor="phone">Phone Number</label>
-                    <input type="number" name="phone" id="phone" value={phoneNumber} onChange={handlePhoneNumberChange} />
+                    <div>
+                        <label htmlFor="phone">Phone Number</label>
+                        <span className='error'>
+                            {hasSubmitted && validationErrors.phoneNumber && `* ${validationErrors.phoneNumber} `}
+                        </span>
+                    </div>
+                    <input type="text" name="phone" id="phone" value={phoneNumber} onChange={handlePhoneNumberChange} required />
                 </div>
 
-                <div className='error'>
-                    {hasSubmitted && validationErrors.phoneType && `* ${validationErrors.phoneType} `}
-                </div>
+
                 <div className="form-group">
-                    <label htmlFor="phoneType">Phone Type</label>
+                    <div>
+                        <label htmlFor="phoneType">Phone Type</label>
+                        <div className='error'>
+                            {hasSubmitted && validationErrors.phoneType && `* ${validationErrors.phoneType} `}
+                        </div>
+                    </div>
                     <select name="phoneType" id="phoneType" defaultValue={phoneType} onChange={handlePhoneTypeChange}>
                         <option value="" disabled>Select a phone type</option>
                         <option value="home">Home</option>
